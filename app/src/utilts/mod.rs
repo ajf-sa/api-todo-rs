@@ -48,3 +48,44 @@ pub mod env {
         }
     }
 }
+
+pub mod connect {
+    use sqlx::postgres::PgPoolOptions;
+    use sqlx::{Error, Pool, Postgres};
+
+    #[derive(Debug)]
+    pub struct Connect {
+        pub db_name: String,
+        pub db_user: String,
+        pub db_pass: String,
+        pub db_host: String,
+        pub db_port: String,
+    }
+
+    impl Connect {
+        pub async fn new() -> Connect {
+            use crate::utilts::env::Env;
+            let env = Env::new();
+            Connect {
+                db_name: env.get_db_name(),
+                db_user: env.get_db_user(),
+                db_pass: env.get_db_pass(),
+                db_host: env.get_db_host(),
+                db_port: env.get_db_port(),
+            }
+        }
+        fn connection_statment(&self) -> String {
+            format!(
+                "postgres://{}:{}@{}:{}/{}",
+                self.db_user, self.db_pass, self.db_host, self.db_port, self.db_name
+            )
+        }
+        pub async fn connection(&self) -> Result<Pool<Postgres>, Error> {
+            let pool = PgPoolOptions::new()
+                .max_connections(5)
+                .connect(&self.connection_statment())
+                .await;
+            pool
+        }
+    }
+}
