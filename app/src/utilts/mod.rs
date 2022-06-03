@@ -50,7 +50,7 @@ pub mod env {
 }
 
 pub mod connect {
-    use sqlx::postgres::PgPoolOptions;
+    use sqlx::postgres::PgPool;
     use sqlx::{Error, Pool, Postgres};
 
     #[derive(Debug)]
@@ -63,9 +63,10 @@ pub mod connect {
     }
 
     impl Connect {
-        pub async fn new() -> Connect {
+        pub fn new() -> Connect {
             use crate::utilts::env::Env;
             let env = Env::new();
+
             Connect {
                 db_name: env.get_db_name(),
                 db_user: env.get_db_user(),
@@ -80,11 +81,9 @@ pub mod connect {
                 self.db_user, self.db_pass, self.db_host, self.db_port, self.db_name
             )
         }
-        pub async fn connection(&self) -> Result<Pool<Postgres>, Error> {
-            let pool = PgPoolOptions::new()
-                .max_connections(5)
-                .connect(&self.connection_statment())
-                .await;
+        pub async fn connect(&self) -> Result<PgPool, Error> {
+            let connection_statment = self.connection_statment();
+            let pool = PgPool::connect(connection_statment.as_str()).await;
             pool
         }
     }

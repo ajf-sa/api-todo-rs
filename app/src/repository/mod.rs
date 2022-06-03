@@ -1,21 +1,34 @@
 pub mod repository {
-    use futures::future::ok;
-    use sqlx::{Pool, Postgres};
+
+    use sqlx::prelude::*;
+    use sqlx::PgPool;
 
     use super::user::User;
 
     pub(crate) struct Repository {
-        pool: Pool<Postgres>,
+        pool: PgPool,
     }
 
     impl Repository {
-        pub fn new(pool: Pool<Postgres>) -> Repository {
+        pub fn new(pool: PgPool) -> Repository {
             Repository { pool }
         }
+        pub async fn set_user(&self, name: String) -> Result<bool, sqlx::Error> {
+            self.pool
+                .execute(sqlx::query("INSERT INTO users (name) VALUES ($1)").bind(name))
+                .await?;
+            Ok(true)
+        }
         pub async fn get_users(&self) -> Result<Vec<User>, sqlx::Error> {
-            Ok(vec![User {
-                name: "test".to_string(),
-            }])
+            let mut users = Vec::<User>::new();
+            let rows = sqlx::query("select name from users")
+                .fetch_all(&self.pool)
+                .await?;
+            for row in rows {
+                let name = row.get("name");
+                users.push(User { name });
+            }
+            Ok(users)
         }
     }
 }

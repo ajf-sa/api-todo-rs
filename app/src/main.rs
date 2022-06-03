@@ -1,22 +1,12 @@
-use futures::TryStreamExt;
-use sqlx::{Executor, FromRow, Row};
 mod repository;
 mod utilts;
 
-#[derive(Debug, FromRow)]
-struct User {
-    pub name: String,
-}
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
-    let env = utilts::env::Env::new();
     let conn = utilts::connect::Connect::new();
-    let pool = match conn.await.connection().await {
-        Ok(pool) => pool,
-        Err(e) => panic!("{}", e),
-    };
-
-    let res = repository::repository::Repository::new(pool);
+    let res = repository::repository::Repository::new(conn.connect().await?);
+    res.set_user("jaiz".to_string()).await?;
     let users = res.get_users().await?;
+    println!("{:?}", users);
     Ok(())
 }
