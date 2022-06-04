@@ -5,25 +5,34 @@ pub mod repository {
 
     use super::user::User;
 
-    pub(crate) struct Repository {
+    #[derive(Debug)]
+    pub struct Repository {
         pool: PgPool,
+        // table_name: &'static str,
+    }
+
+    trait RepositoryInterface {
+        fn new(pool: PgPool) -> Self;
+        fn set_user(&self, name: String) -> Result<bool, sqlx::Error>;
+        fn get_users(&self) -> Result<Vec<User>, sqlx::Error>;
     }
 
     impl Repository {
         pub fn new(pool: PgPool) -> Repository {
-            Repository { pool }
+            Repository {
+                pool,
+                // table_name: "users",
+            }
         }
         pub async fn set_user(&self, name: String) -> Result<bool, sqlx::Error> {
-            self.pool
-                .execute(sqlx::query("INSERT INTO users (name) VALUES ($1)").bind(name))
-                .await?;
+            let stmt: &str = "INSERT INTO users (name) VALUES ($1)";
+            self.pool.execute(sqlx::query(stmt).bind(name)).await?;
             Ok(true)
         }
         pub async fn get_users(&self) -> Result<Vec<User>, sqlx::Error> {
+            let stmt = "SELECT name FROM users";
             let mut users = Vec::<User>::new();
-            let rows = sqlx::query("select name from users")
-                .fetch_all(&self.pool)
-                .await?;
+            let rows = sqlx::query(stmt).fetch_all(&self.pool).await?;
             for row in rows {
                 let name = row.get("name");
                 users.push(User { name });
@@ -34,7 +43,7 @@ pub mod repository {
 }
 
 pub mod user {
-    use sqlx::{FromRow, Row};
+    use sqlx::FromRow;
 
     #[derive(Debug, FromRow)]
     pub struct User {
