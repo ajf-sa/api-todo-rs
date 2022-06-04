@@ -6,7 +6,6 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4"
 dotenv = "0.15.0"
 futures = "0.3.21"
 sqlx = {version = "0.5", features = ["runtime-tokio-native-tls", "postgres"]}

@@ -1,6 +1,5 @@
 use std::fmt::Error;
 
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use futures::future::ok;
 use repository::user::User;
 
