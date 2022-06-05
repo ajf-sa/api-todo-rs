@@ -5,7 +5,7 @@ pub mod repository {
 
     use super::user::User;
 
-    #[derive(Debug)]
+    #[derive(Debug, Clone)]
     pub struct Repository {
         pool: PgPool,
         // table_name: &'static str,
@@ -43,9 +43,10 @@ pub mod repository {
 }
 
 pub mod user {
+    use serde::{Deserialize, Serialize};
     use sqlx::FromRow;
 
-    #[derive(Debug, FromRow)]
+    #[derive(Debug, FromRow, Serialize, Deserialize)]
     pub struct User {
         pub name: String,
     }
