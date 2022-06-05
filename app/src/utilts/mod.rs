@@ -43,8 +43,8 @@ pub mod env {
         pub fn get_db_port(&self) -> String {
             self.db_port.clone()
         }
-        pub fn get_port(&self) -> String {
-            self.app_port.clone()
+        pub fn get_app_port(&self) -> u16 {
+            self.app_port.clone().parse::<u16>().unwrap()
         }
     }
 }
