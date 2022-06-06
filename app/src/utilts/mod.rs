@@ -1,6 +1,7 @@
 pub mod env {
     extern crate dotenv;
     use dotenv::dotenv;
+    #[derive(Debug, Clone)]
     pub struct Env {
         app_name: String,
         app_port: String,

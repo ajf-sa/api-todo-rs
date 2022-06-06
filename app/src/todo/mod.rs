@@ -20,11 +20,17 @@ pub mod service {
 }
 
 pub mod handler {
-    use actix_web::web;
+    use actix_web::{web, HttpResponse};
+
+    use crate::{repository::repository::Repository, utilts::env::Env};
+
+    use super::service::Service;
 
     #[derive(Clone)]
     pub struct ActixSchema {
-        pub service: super::service::Service,
+        pub service: Service,
+        pub repository: Repository,
+        pub env: Env,
     }
 
     pub async fn add_name(
@@ -38,13 +44,7 @@ pub mod handler {
     pub async fn get_names(
         schema: actix_web::web::Data<ActixSchema>,
     ) -> Result<impl actix_web::Responder, actix_web::Error> {
-        let users = match schema.service.get_users().await {
-            Ok(users) => users,
-            Err(e) => {
-                println!("{}", e);
-                vec![]
-            }
-        };
+        let users = schema.service.get_users().await.unwrap();
 
         Ok(actix_web::HttpResponse::Ok()
             .content_type("application/json")
