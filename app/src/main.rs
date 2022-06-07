@@ -21,5 +21,6 @@ async fn main() -> Result<()> {
     };
     let app = Application::build(schema, env).unwrap();
     app.run_until_stopped().await?;
+
     Ok(())
 }

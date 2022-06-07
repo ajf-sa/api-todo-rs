@@ -20,7 +20,7 @@ pub mod service {
 }
 
 pub mod handler {
-    use actix_web::{web, HttpResponse};
+    use actix_web::web;
 
     use crate::{repository::repository::Repository, utilts::env::Env};
 
