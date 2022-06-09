@@ -29,7 +29,7 @@ RUN apk update \
     && apk add --no-cache ca-certificates tzdata \
     && rm -rf /var/cache/apk/*
 
-COPY --from=builder /home/rust/src/rust-docker-web/target/x86_64-unknown-linux-musl/release/app ${APP}/api
+COPY --from=builder /home/rust/src/rust-docker-web/target/x86_64-unknown-linux-musl/release/api ${APP}/api
 COPY --from=builder /home/rust/src/rust-docker-web/src/static ${APP}/static
 COPY --from=builder /home/rust/src/rust-docker-web/src/.env ${APP}/.env
 
