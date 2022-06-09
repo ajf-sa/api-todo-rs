@@ -30,7 +30,7 @@ RUN apk update \
     && rm -rf /var/cache/apk/*
 
 COPY --from=builder /home/rust/src/rust-docker-web/target/x86_64-unknown-linux-musl/release/api ${APP}/api
-COPY --from=builder /home/rust/src/rust-docker-web/src/static ${APP}/static
+# COPY --from=builder /home/rust/src/rust-docker-web/src/static ${APP}/static
 COPY --from=builder /home/rust/src/rust-docker-web/src/.env ${APP}/.env
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
