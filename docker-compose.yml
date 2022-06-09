@@ -8,9 +8,9 @@ services:
     networks:
       - default
     expose:
-      - "8881"
+      - "8081"
     ports:
-      - "8881:8881"
+      - "8081:8081"
     container_name: api-todo-rs
     hostname: api-todo-rs
     restart: always
