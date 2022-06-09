@@ -9,7 +9,7 @@ RUN rm src/*.rs
 
 ADD . ./
 
-RUN rm ./target/x86_64-unknown-linux-musl/release/deps/app*
+RUN rm ./target/x86_64-unknown-linux-musl/release/deps/api*
 RUN cargo build --release
 
 
@@ -29,7 +29,7 @@ RUN apk update \
     && apk add --no-cache ca-certificates tzdata \
     && rm -rf /var/cache/apk/*
 
-COPY --from=builder /home/rust/src/rust-docker-web/target/x86_64-unknown-linux-musl/release/app ${APP}/app
+COPY --from=builder /home/rust/src/rust-docker-web/target/x86_64-unknown-linux-musl/release/app ${APP}/api
 COPY --from=builder /home/rust/src/rust-docker-web/src/static ${APP}/static
 COPY --from=builder /home/rust/src/rust-docker-web/src/.env ${APP}/.env
 
